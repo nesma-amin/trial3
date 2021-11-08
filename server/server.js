@@ -127,6 +127,22 @@ app.get('/getAll', (request, response) => {
     .then(data => response.json({data : data}))
     .catch(err => console.log(err));
 })
+
+//Create template
+
+app.post('/createTemplate', (request, response) => {
+
+    let temp_data = {};
+    temp_data = request.body.Data;
+    const db = dbService.getDbServiceInstance();
+    console.log("request.body.email", request.body.Data)
+
+    const result = db.insertNewTemplateData(temp_data);
+
+    result
+    .then(data => response.json({ data: data}))
+    .catch(err => console.log(err));
+});
 //Verify account
 app.post('/verifyAccount', (request, response) => {
 
@@ -175,20 +191,22 @@ app.get('/search/:name', (request, response) => {
     .then(data => response.json({data : data}))
     .catch(err => console.log(err));
 })
- 
-//read
-// app.get('/getAll', (request, response) => {
-//     console.log('test')
-//     response.json({
-//         success:true
-//     });
-//     const db = dbService.getDbServiceInstance();
 
-//     const result = db.getAllData();
+//read
+app.get('/getEmployeeProjects', (request, response) => {
+    console.log("tessst")
+
+    //console.log("request",request)
+
+    const db = dbService.getDbServiceInstance();
+    const result = db.getEmployeeProjects();
     
-//     result
-//     .then(data => response.json({data : data}))
-//     .catch(err => console.log(err));
-// })
+    result
+    .then(data => response.json({data : data}))
+    .catch(err => console.log(err));
+    
+
+})
+
 
 
