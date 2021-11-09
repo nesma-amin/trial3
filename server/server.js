@@ -51,7 +51,7 @@ const storage = multer.diskStorage({
 const upload = multer({storage: storage})
 
 // handle single file upload
-app.post('/fileupload', upload.single('upload_file1'), (req, res, next) => {
+app.post('/fileupload', upload.single('upload_file2'), (req, res, next) => {
    const file = req.file;
    if (!file) {
       return res.status(400).send({ message: 'Please upload a file.' });
@@ -143,6 +143,40 @@ app.post('/createTemplate', (request, response) => {
     .then(data => response.json({ data: data}))
     .catch(err => console.log(err));
 });
+
+//add new entry in a template
+app.post('/attachmentupload', upload.single('upload_file'),(req, res) => {
+    const file = req.file;
+    console.log("file",file)
+    if (!file) {
+       return res.status(400).send({ message: 'Please upload a file.' });
+    }
+    const db = dbService.getDbServiceInstance();
+    // console.log("req", {req})
+ 
+    const result = db.uploadAttachment(req.file);
+        return res.send({ message: 'File uploaded successfully.', file });
+ //     });
+ });
+app.post('/addTemplateEntry',(request, response) => {
+
+    let temp_data = {};
+    temp_data = request.body.Data;
+    console.log("request for add entry", request)
+
+        // const file = request.body.Data.file;
+        // if (!file) {
+        //    return res.status(400).send({ message: 'Please upload a file.' });
+        // }
+    const db = dbService.getDbServiceInstance();
+    // console.log("request.body.email", request.body.Data)
+
+    const result = db.insertNewTemplateEntry(temp_data);
+
+    result
+    .then(data => response.json({ data: data}))
+    .catch(err => console.log(err));
+});
 //Verify account
 app.post('/verifyAccount', (request, response) => {
 
@@ -186,7 +220,7 @@ app.get('/search/:name', (request, response) => {
     const db = dbService.getDbServiceInstance();
 
     const result = db.searchByName(name);
-    
+   
     result
     .then(data => response.json({data : data}))
     .catch(err => console.log(err));

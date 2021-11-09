@@ -25,7 +25,7 @@ class DbService {
     async getImage() {
         try {
             const response = await new Promise((resolve, reject) => {
-                const query = "SELECT * FROM files_data;";
+                const query = "SELECT * FROM t_files_data;";
                 console.log("database select all",query)
                 connection.query(query, (err, results) => {
                     if (err) reject(new Error(err.message));
@@ -50,38 +50,70 @@ class DbService {
             })
         });
         console.log("*****************userProjects",userProjects)
-        let projectTemplates = await new Promise((resolve, reject) => {
+        let j=0;
+        let projectTemplates=[];
+        let projectTemplatesPromis = await new Promise((resolve, reject) => {
             const userProjectsArray=Object.entries(userProjects)
-            userProjectsArray.map(function (projectName){
+            // userProjectsArray.map(function (projectName){
+                for(let projectName of userProjectsArray){
+                    console.log(">>>projectName",projectName)
             const templatesIdsQuery = "SELECT temp_id,project_name FROM t_templat_projects WHERE project_name=?;";
             connection.query(templatesIdsQuery,[projectName[1].project_unique_name], (err, results) => {
                 if (err) reject(new Error(err.message));
                 resolve(results);
-                // const resultObject=Object.assign({},results)
-                // projectTemplatesIds.push({project: projectName[1].project_name,
-                //          templates_ids : resultObject})
+                projectTemplates[j]=Object.assign(results)
+                    j++
+                    console.log(">>>projectTemplates",projectTemplates)
+
             })  //end query connection                                     
-        });//end map
+        };//end map
     })//end project temp promise
-    console.log(" projectTemplates",projectTemplates)
-        let userTemplates=[]
-           let templatesName=[];
+    console.log(" ***********projectTemplates",projectTemplates)
+    console.log(" ***********projectTemplatesPromis",projectTemplatesPromis)
+
+        let templatesName=[];
+        let userTemplates=[];
         let i=0;
-        projectTemplates.map( async(projectObject)=>{
-         userTemplates= await new Promise((resolve, reject) => {
+        for (let projectObject of projectTemplates) {
+          userTemplates= await new Promise((resolve, reject) => {
+            for (let projectElement of projectObject) {
 
                 const templatesNameQuery = "SELECT template_name,template_id FROM t_templates WHERE template_id=?;";
-                connection.query(templatesNameQuery, [projectObject.temp_id],(err, results) => {
+                connection.query(templatesNameQuery, [projectElement.temp_id],(err, results) => {
                     if (err) reject(new Error(err.message));
                     resolve(results);
                     console.log("results",results)
-                    templatesName[i]=Object.assign(results)
+                    const keys = Object.keys(templatesName);
+                    let duplicate = false;
+
+                    for(let i=0;i<keys.length;i++){
+                    for(let j=i+1;j<keys.length;j++){
+                    if(templatesName[keys[i]].temp_id === templatesName[keys[j]].temp_id){
+                        duplicate = true;
+                        break;
+                    }
+                    }
+                }
+                    if(!duplicate)
+                    {
+                        templatesName[i]=Object.assign(results)
                     i++
+                    }
+                    
+                    console.log("$$$$$templatesName",templatesName)
+
                 })
+            }
             });
-            console.log("templatesName",templatesName)      
-        })//2nd map
-    return {userProjects,projectTemplates,userTemplates}
+            console.log("userTemplates",userTemplates)
+
+        }
+
+        console.log("templatesName",templatesName)
+
+        // userTemplatesName=Object.assign(templatesName)
+        console.log("userTemplates",userTemplates)
+    return {userProjects,projectTemplates,templatesName}
         } catch (error) {
             console.log(error);
         }
@@ -104,6 +136,29 @@ console.log("database select all",query)
             console.log(error);
         }
     }
+    async uploadAttachment (fileData={}){
+        try {
+        // const uploadeDate = new Date();
+        console.log("fileData",fileData)
+        const insertId = await new Promise((resolve, reject) => {
+            const query = "INSERT INTO `t_template_entries` (attachment_name) VALUES (?)";
+           
+            connection.query(query,
+                [fileData.filename],(err,result) => {
+                if (err) reject(new Error(err.message));
+                console.log("result",result)
+                resolve(result.insertId);
+            })
+        });
+        console.log("insertId",insertId)
+        return {
+            id : insertId,
+            filename:fileData.filename
+        };
+    } catch (error) {
+        console.log(error);
+    }
+}
     async uploadFileData(fileData={}){
         try {
             const uploadeDate = new Date();
@@ -157,6 +212,41 @@ async updateVerificationStatus(email){
         console.log(error);
     }
 }
+
+
+async insertNewTemplateEntry(entryData={}) {
+    try {
+        const tempCreationDate = new Date();
+        console.log("tempCreationDate",tempCreationDate)
+        // console.log("entryData",entryData.formData.filename)
+        // console.log("templateData.template_desc",templateData.template_desc)
+        // console.log("templateData.session_id",templateData.session_id)
+        // console.log("db service received data",templateData)
+        const insertId = await new Promise((resolve, reject) => {
+            const query = "INSERT INTO t_template_entries (template_id,project_unique_name,session_id,entry_text,entry_date) VALUES (?,?,?,?,?);";
+
+            connection.query(query, [
+                entryData.template_id,
+                entryData.project_unique_name,
+                entryData.session_id,
+                entryData.entry_text,
+                 tempCreationDate,] , (err, result) => {
+                if (err) reject(new Error(err.message));
+                console.log("result",result)
+                resolve(result.insertId);
+            })
+        });
+        console.log("insertedID",insertId)
+
+        return {
+            id : insertId,
+        };
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
 async insertNewTemplateData(templateData={}) {
     try {
         const tempCreationDate = new Date();
