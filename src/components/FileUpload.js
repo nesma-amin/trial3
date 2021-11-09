@@ -36,7 +36,7 @@ uploadFile=(event)=>{
     const formData = new FormData();
     console.log("selcted file", this.state.selectedFile)
     formData.append('upload_file1', this.state.selectedFile);
-  
+    console.log("formData",formData)
           fetch(
               `${this.url}/fileupload`,
               {

@@ -10,9 +10,10 @@ import Nav from './Nav'
 import AdminPage from './AdminPage'
 import Login from './Login'
 // import NotFound from './NotFound'
-// import LogOut from './LogOut'
+import CreateTemplate from './CreateTemplate'
 import AccountVerify from './AccountVerify'
 import FileUpload from './FileUpload'
+import TemplateNewEntry from './TemplateNewEntry'
 
 
 // import { withRouter } from 'react-router-dom'
@@ -47,6 +48,15 @@ class App extends Component {
               )} />
                <Route exact path='/FileUpload' render={() => (
                 <FileUpload />
+              )} />
+              <Route exact path='/CreateTemplate' render={() => (
+                <CreateTemplate />
+              )} />
+              <Route exact path='/Dashboard' render={() => (
+                <Dashboard />
+              )} />
+              <Route exact path='/TemplateNewEntry' render={() => (
+                <TemplateNewEntry />
               )} />
               
               

@@ -71,6 +71,11 @@ render(){
                <Link to={`/userReg`} className='reg'> register</Link>
                <Link to={`/AdminPage`} className='admin'> Admin</Link>
                <Link to={`/FileUpload`} className='fileUpload'> File Upload</Link>
+               
+               <Link to={`/CreateTemplate`} className='createTemplate'> Create Template</Link>
+               <Link to={`/Dashboard`} className='Dashboard'> Dashboard</Link>
+
+               
 
 
 

@@ -28,40 +28,35 @@ class Dashboard extends Component {
                 }
             }
             let listHtml = "";
-            // const projectArray=Object.entries(data.projects)
-            data.userProjects.map(function (project) {
-                console.log("project",project)
-                listHtml += `<li>${project.project_name}</li>`;
-                console.log("listHtml",listHtml)
-
-                // this.loadprojectHTMLTree(project.templates)              
-            });
-
             data.userProjects.map(function(project){
                 listHtml += `<li>${project.project_name}</li>`;
+                listHtml += `<ul>`;
                 data.projectTemplates.map(function(template){
                     console.log("template",template)
                     console.log("project",project)
-                    if(project.project_unique_name === template.project_name)
+                    template.map(function(templateElement){
+                    if(project.project_unique_name === templateElement.project_name)
                     {
-                        console.log("template.project_name",template.project_name)
+                        console.log("template.project_name",templateElement.project_name)
                         console.log("project.project_unique_name",project.project_unique_name)
                         data.templatesName.map(function(temp_name){
                             console.log("temp_name",temp_name)
 
-                            listHtml += `<ul>`;
-                            if(template.temp_id===temp_name[0].template_id)
+                            
+                            if(templateElement.temp_id===temp_name[0].template_id)
                             {
-
-                                listHtml += `<li>${temp_name[0].template_name}</li>`;
-
-
+                                const location=`/TemplateNewEntry?temp_id=${temp_name[0].template_id}&project_name=${project.project_unique_name}`
+                                // const loaction=`/TemplateNewEntry/${temp_name[0].template_name}`
+                                listHtml += `<li><a href=${location}>${temp_name[0].template_name}</a></li>`;
                             }
                         })   
-                        listHtml += `</ul>`;
                     }
                 }) 
+
             })
+            listHtml += `</ul>`;
+
+        })
 
             console.log("listHtml",listHtml)
             list.innerHTML=listHtml

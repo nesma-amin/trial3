@@ -87,12 +87,12 @@ else{
   
   loadHTMLTable=(data) =>{
     const table = document.querySelector('table tbody');
-console.log("data",data)
-if(data){
-    if (data.length === 0) {
-        table.innerHTML = "<tr><td class='no-data' colspan='5'>No Data</td></tr>";
-        return;
-    }
+    console.log("data",data)
+    if(data){
+        if (data.length === 0) {
+            table.innerHTML = "<tr><td class='no-data' colspan='5'>No Data</td></tr>";
+            return;
+        }
 
     let tableHtml = "";
 
@@ -118,11 +118,11 @@ if(data){
   }
 }
   componentDidMount(){
-  //   document.addEventListener('DOMContentLoaded',  ()=> {
-  //   fetch(`${this.url}/getAll`)
-  //   .then(response => response.json())
-  //   .then(data => this.loadHTMLTable(data['data']));  
-  // });
+    document.addEventListener('DOMContentLoaded',  ()=> {
+    fetch(`${this.url}/getAll`)
+    .then(response => response.json())
+    .then(data => this.loadHTMLTable(data['data']));  
+  });
   }
 
 
