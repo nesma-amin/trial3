@@ -155,7 +155,11 @@ app.post('/attachmentupload', upload.single('upload_file'),(req, res) => {
     // console.log("req", {req})
  
     const result = db.uploadAttachment(req.file);
-        return res.send({ message: 'File uploaded successfully.', file });
+    result
+    // .then(data=>console.log("inserted file data",data))
+    .then(data => res.json({ data: data}))
+    .catch(err => console.log(err));
+        // return res.send({ message: 'File uploaded successfully.', file });
  //     });
  });
 app.post('/addTemplateEntry',(request, response) => {
@@ -192,6 +196,18 @@ app.post('/verifyAccount', (request, response) => {
     .catch(err => console.log(err));
 });
 // update
+app.patch('/updateTemplateEntry', (request, response) => {
+    const temp_data = request.body.Data;
+    console.log("temp_data",temp_data)
+    const db = dbService.getDbServiceInstance();
+
+    const result = db.updateTemplateEntry(temp_data);
+    
+    result
+    .then(data => response.json({success : data}))
+    .catch(err => console.log(err));
+});
+//update template entry
 app.patch('/update', (request, response) => {
     const { id, name } = request.body;
     const db = dbService.getDbServiceInstance();

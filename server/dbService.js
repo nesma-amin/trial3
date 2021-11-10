@@ -214,23 +214,23 @@ async updateVerificationStatus(email){
 }
 
 
-async insertNewTemplateEntry(entryData={}) {
+async updateTemplateEntry(entryData={}) {
     try {
         const tempCreationDate = new Date();
         console.log("tempCreationDate",tempCreationDate)
-        // console.log("entryData",entryData.formData.filename)
+        console.log("entryData",entryData)
         // console.log("templateData.template_desc",templateData.template_desc)
         // console.log("templateData.session_id",templateData.session_id)
         // console.log("db service received data",templateData)
         const insertId = await new Promise((resolve, reject) => {
-            const query = "INSERT INTO t_template_entries (template_id,project_unique_name,session_id,entry_text,entry_date) VALUES (?,?,?,?,?);";
-
+            const query = "UPDATE `t_template_entries` SET `template_id`=?,`project_unique_name`=?,`session_id`=?,`entry_text`=?,`entry_date`=? WHERE `entry_id` = ?";
+            console.log("query",query)
             connection.query(query, [
                 entryData.template_id,
                 entryData.project_unique_name,
                 entryData.session_id,
                 entryData.entry_text,
-                 tempCreationDate,] , (err, result) => {
+                 tempCreationDate,entryData.entry_id] , (err, result) => {
                 if (err) reject(new Error(err.message));
                 console.log("result",result)
                 resolve(result.insertId);
