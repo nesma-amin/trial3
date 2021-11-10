@@ -14,6 +14,7 @@ class Dashboard extends Component {
           .then(response => response.json())
           .then(data => this.loadHTMLTree(data['data']))
         });
+        window.location.reload();
         }
         /////Present data in unordered list
         loadHTMLTree=(data) =>{

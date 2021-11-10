@@ -1,58 +1,114 @@
 import React, { Component } from 'react'
 
 class TemplateNewEntry extends Component {
+    constructor() {
+        super();
+    
+        this.id = ''
+    }
     state = {
         selectedFile:'',
-        entry_text:''
+        entry_text:'',
+        insertedId:'',
       }
     //   state = {
     //     inputUser:'',
     //     logo:''
     
     //   }
+    // updateInsrtedId=(data) =>{
+    //     console.log("data:",data)
+    //     const id=data.id
+    //     console.log("id",id)
+    //     this.setState(() => ({ insertedId:id
+    //               }))
+    // }
       handleNewEntry= ()=>{
         //   let userData={};
+         //handle uploaded file
+         let entry_id=0
+         let that= this
+         const url_string = window.location;
+const url = new URL(url_string);
+const url_temp_id = url.searchParams.get("temp_id");
+const url_project_name = url.searchParams.get("project_name");
+     console.log("this.state.insertedId",that.state.insertedId)
+let template_data 
+         const formData = new FormData();
+         console.log("selcted file", this.state.selectedFile)
+         formData.append('upload_file', this.state.selectedFile);
+         fetch(
+             `http://localhost:5001/attachmentupload`,
+             {
+                 method: 'POST',
+                 body: formData,
+             }
+         )
+             .then((response) => response.json())
+             .then(function (data) {
+                console.log('Success:', data.data.id);
+                entry_id = data.data.id
+                that.setState({ insertedId: entry_id})
+        // this.id=data.data.id
+    }).catch((error) => {
+                 console.error('Error:', error);
+    }).then(function(){
+    //handle url inputs
+    template_data = {
+    // entry_id:this.state.insertedId,
+    entry_id:that.state.insertedId,
+    template_id:url_temp_id,
+    project_unique_name:url_project_name,
+    session_id:"Moaz",
+    entry_text:that.state.entry_text,
+    }
+
+    console.log("Entry data to be saved",template_data)
+
+    fetch('http://localhost:5001/updateTemplateEntry', {
+        headers: {
+            'Content-type': 'application/json'
+        },
+        method: 'PATCH',
+        body: JSON.stringify({ Data : 
+            template_data})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // window.location.reload();
+        }
+    })
+  
+
+             })
         //handle url inputs
-        const url_string = window.location;
-        const url = new URL(url_string);
-        const url_temp_id = url.searchParams.get("temp_id");
-        const url_project_name = url.searchParams.get("project_name");
+        // let template_data = {
+        //     // entry_id:this.state.insertedId,
+        //     entry_id:this.state.insertedId,
+        //     template_id:url_temp_id,
+        //     project_unique_name:url_project_name,
+        //     session_id:"Moaz",
+        //     entry_text:this.state.entry_text,
+        //     };
 
-        let template_data = {
-            template_id:url_temp_id,
-            project_unique_name:url_project_name,
-            session_id:"Moaz",
-            entry_text:this.state.entry_text,
-            };
+        // console.log("Entry data to be saved",template_data)
 
-        console.log("Entry data to be saved",template_data)
-            fetch('http://localhost:5001/addTemplateEntry', {
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                method: 'POST',
-                body: JSON.stringify({ Data : 
-                    template_data})
-            })
-            .then(response => response.json())
-           //handle uploaded file
-        const formData = new FormData();
-        console.log("selcted file", this.state.selectedFile)
-        formData.append('upload_file', this.state.selectedFile);
-        fetch(
-            `http://localhost:5001/attachmentupload`,
-            {
-                method: 'POST',
-                body: formData,
-            }
-        )
-            .then((response) => response.json())
-            .then((result) => {
-                console.log('Success:', result);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+        //     fetch('http://localhost:5001/updateTemplateEntry', {
+        //         headers: {
+        //             'Content-type': 'application/json'
+        //         },
+        //         method: 'PATCH',
+        //         body: JSON.stringify({ Data : 
+        //             template_data})
+        //     })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.success) {
+        //             // window.location.reload();
+        //         }
+        //     })
+          
     }
     fileChangeHandler=(event)=>{
         this.setState(() => ({
